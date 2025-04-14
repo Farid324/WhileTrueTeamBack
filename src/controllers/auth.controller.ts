@@ -4,7 +4,31 @@ const prisma = new PrismaClient();
 
 export const login = async (req: Request, res: Response) => {
     const { email, password } = req.body;
-  
+    const allowedDomains = [
+      '@gmail.com',
+      '@outlook.com',
+      '@hotmail.com',
+      '@live.com',
+      '@yahoo.com',
+      '@icloud.com',
+      '@proton.me'
+    ];
+    const emailDomain = email.substring(email.indexOf('@'));
+    // Validar que email y password existan
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email y contraseña son requeridos' });
+    }
+    // 🔥 Después validamos el dominio
+    
+    if (!allowedDomains.includes(emailDomain)) {
+    return res.status(400).json({ message: 'Introduzca un dominio correcto' });
+    }
+
+    // Validar la longitud de la contraseña
+   if (password.length < 8 || password.length > 25) {
+      return res.status(400).json({ message: 'La contraseña debe tener entre 8 y 25 caracteres' });
+    }
+
     try {
       const user = await prisma.usuario.findUnique({
         where: { email },
