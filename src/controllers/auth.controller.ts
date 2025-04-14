@@ -22,6 +22,11 @@ export const login = async (req: Request, res: Response) => {
     if (!email.includes('@')) {
       return res.status(400).json({ message: 'Incluye un signo @ en el correo electrónico.' });
     }
+    // Validar que haya texto antes del @
+    const atIndex = email.indexOf('@');
+    if (atIndex <= 0) {
+      return res.status(400).json({ message: 'Ingresa nombre de usuario antes del signo @' });
+    }
     const emailDomain = email.substring(email.indexOf('@'));
     // 🔥 Después validamos el dominio
     
