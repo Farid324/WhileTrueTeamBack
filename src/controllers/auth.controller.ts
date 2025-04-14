@@ -13,11 +13,16 @@ export const login = async (req: Request, res: Response) => {
       '@icloud.com',
       '@proton.me'
     ];
-    const emailDomain = email.substring(email.indexOf('@'));
+    
     // Validar que email y password existan
     if (!email || !password) {
       return res.status(400).json({ message: 'Email y contraseña son requeridos' });
     }
+    // Validar que el email contenga '@'
+    if (!email.includes('@')) {
+      return res.status(400).json({ message: 'Incluye un signo @ en el correo electrónico.' });
+    }
+    const emailDomain = email.substring(email.indexOf('@'));
     // 🔥 Después validamos el dominio
     
     if (!allowedDomains.includes(emailDomain)) {
