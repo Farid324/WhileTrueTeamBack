@@ -27,6 +27,12 @@ export const login = async (req: Request, res: Response) => {
     if (atIndex <= 0) {
       return res.status(400).json({ message: 'Ingresa nombre de usuario antes del signo @' });
     }
+    // ✅ Nueva validación: texto después del @
+    const domainPart = email.substring(atIndex + 1);
+    if (!domainPart || domainPart.trim() === '') {
+      return res.status(400).json({ message: 'Ingresa un dominio después del signo @' });
+    }
+    
     const emailDomain = email.substring(email.indexOf('@'));
     // 🔥 Después validamos el dominio
     
