@@ -56,17 +56,17 @@ export const login = async (req: Request, res: Response) => {
       });
   
       if (!user) {
-        return res.status(401).json({ message: 'Usuario no encontrado' });
+        return res.status(401).json({ message: 'Correo ingresado no se encuentra en el sistema.' });
       }
   
       if (user.contraseña !== password) {
-        return res.status(401).json({ message: 'Contraseña incorrecta' });
+        return res.status(401).json({ message: 'Los datos no son válidos' });
       }
   
       return res.json({ message: 'Login exitoso', user: { email: user.email } });
   
     } catch (error) {
       console.error(error);
-      return res.status(500).json({ message: 'Error en el servidor' });
+      return res.status(500).json({ message: 'Error en el servidor' });
     }
   };
