@@ -2,13 +2,13 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
-
+import passwordRoutes from './routes/password.routes';
 import authRoutes from './routes/auth.routes';
 // Cargar variables de entorno
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 // Middlewares
 app.use(cors());
@@ -17,7 +17,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/api', authRoutes);
-
+app.use('/api', passwordRoutes);
 // End point para verificar la salud de la conexión de la API
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok' });
