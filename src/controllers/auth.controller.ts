@@ -18,6 +18,11 @@ export const login = async (req: Request, res: Response) => {
     if (!email || !password) {
       return res.status(400).json({ message: 'Email y contraseña son requeridos' });
     }
+    // Validar que el correo no exceda los 70 caracteres
+    if (email.length > 70) {
+      return res.status(400).json({ message: 'La cantidad máxima es de 70 caracteres' });
+    }
+
     // Validar que el email contenga '@'
     if (!email.includes('@')) {
       return res.status(400).json({ message: 'Incluye un signo @ en el correo electrónico.' });
@@ -27,7 +32,7 @@ export const login = async (req: Request, res: Response) => {
     if (atIndex <= 0) {
       return res.status(400).json({ message: 'Ingresa nombre de usuario antes del signo @' });
     }
-    // ✅ Nueva validación: texto después del @
+    // Validar que haya un dominio después del @
     const domainPart = email.substring(atIndex + 1);
     if (!domainPart || domainPart.trim() === '') {
       return res.status(400).json({ message: 'Ingresa un dominio después del signo @' });
