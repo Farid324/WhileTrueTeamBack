@@ -1,14 +1,19 @@
-// src/utils/codeStore.ts
-const codeMap = new Map<string, string>();
+// Usaremos un objeto en memoria para almacenar los códigos por correo
+const codeStore: { [email: string]: string } = {}; // Objeto que almacena códigos de verificación por email
 
-export function saveCode(email: string, code: string) {
-  codeMap.set(email, code);
-}
+// Función para almacenar el código de verificación para un correo específico
+export const storeCode = (email: string, code: string) => {
+  codeStore[email] = code;
+  console.log(`Código almacenado para ${email}: ${code}`); // Log para verificar que se guarda correctamente
+};
 
-export function getCode(email: string) {
-  return codeMap.get(email);
-}
+// Función para obtener el código almacenado para un correo específico
+export const getCode = (email: string) => {
+  return codeStore[email];
+};
 
-export function deleteCode(email: string) {
-  codeMap.delete(email);
-}
+// Función para eliminar el código después de usarlo (opcional)
+export const deleteCode = (email: string) => {
+  delete codeStore[email];
+};
+
