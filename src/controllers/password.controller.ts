@@ -23,7 +23,7 @@ export const recoverPassword: RequestHandler = async (req, res) => {
     const user = await prisma.user.findUnique({ where: { email } });
 
     if (!user) {
-      res.status(404).json({ message: 'Usuario no encontrado' });
+      res.status(404).json({ message: 'El correo no está registrado en Redibo' });
       return;
     }
 
