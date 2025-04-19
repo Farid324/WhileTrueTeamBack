@@ -1,29 +1,37 @@
-import { getCode, deleteCode } from '@/utils/codeStore';  // Asegúrate de importar las funciones correctas
-import { RequestHandler } from 'express';
+import { PrismaClient } from '@prisma/client';
+import { Request, Response } from 'express';
+import { resetAttempts } from '../utils/attemptStore';
 
-export const verifyCode: RequestHandler = (req, res) => {
-  const { email, code } = req.body;
+const prisma = new PrismaClient();
 
-  // Recuperamos el código almacenado para el correo
-  const savedCode = getCode(email);
+export const verifyCode = async (req: Request, res: Response) => {
+  const { code } = req.body;
 
-  // Asegúrate de que el código proporcionado sea una cadena y comparar con el almacenado
-  console.log(`Código almacenado: ${savedCode}`); // Log para verificar el código almacenado
-  console.log(`Código proporcionado: ${code}`);  // Log para verificar el código proporcionado
+  console.log('🧪 Código recibido:', code);
 
-  if (!savedCode) {
-    res.status(400).json({ message: 'No se encontró un código de verificación para este correo' });
+  if (!code || code.trim().length !== 6) {
+    res.status(400).json({ message: 'Código inválido' });
     return;
   }
 
-  // Comparar el código almacenado con el proporcionado
-  if (savedCode !== code) {
-    res.status(400).json({ message: 'Código incorrecto' });
-    return;
+  try {
+    const user = await prisma.user.findFirst({
+      where: {
+        codigoVerificacion: code.trim(),
+      },
+    });
+
+    if (!user) {
+      res.status(400).json({ message: 'Código incorrecto' });
+      return;
+    }
+
+    resetAttempts(user.email);
+
+    res.json({ message: 'Código verificado correctamente', code: code.trim() });
+
+  } catch (error) {
+    console.error('❌ Error al verificar el código:', error);
+    res.status(500).json({ message: 'Error en el servidor' });
   }
-
-  // El código es correcto, podemos proceder a borrar el código para evitar futuros usos
-  deleteCode(email);
-
-  res.json({ message: 'Código verificado correctamente' });
 };
