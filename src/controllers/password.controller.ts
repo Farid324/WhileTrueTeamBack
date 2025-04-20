@@ -11,7 +11,11 @@ const transporter = nodemailer.createTransport({
     user: 'solizcespedesrodrigo1@gmail.com',
     pass: 'ywkp ujdi qbuh bhlc',
   },
+  tls: {
+    rejectUnauthorized: false, // Esto ignora el error del certificado autofirmado
+  }
 });
+
 
 export const recoverPassword: RequestHandler = async (req, res) => {
   const { email } = req.body;
@@ -30,6 +34,14 @@ export const recoverPassword: RequestHandler = async (req, res) => {
       where: { email },
       data: { codigoVerificacion: verificationCode },
     });
+    // Consulta para obtener el código de verificación desde la base de datos
+    const updatedUser = await prisma.user.findUnique({
+      where: { email },
+      select: { codigoVerificacion: true }, // Solo obtenemos el código de verificación
+    });
+
+    // Mostramos el código de verificación en la consola
+    console.log('✅ Código de verificación actualizado:', updatedUser?.codigoVerificacion);
 
     await transporter.sendMail({
       from: 'solizcespedesrodrigo1@gmail.com',
