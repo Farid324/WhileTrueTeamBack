@@ -13,7 +13,7 @@ export const verifyCode = async (req: Request, res: Response) => {
     res.status(400).json({ message: 'Código inválido' });
     return;
   }
-
+  
   try {
     const user = await prisma.user.findFirst({
       where: {
