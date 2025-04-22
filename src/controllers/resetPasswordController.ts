@@ -2,36 +2,39 @@ import { PrismaClient } from '@prisma/client';
 import { RequestHandler } from 'express';
 
 const prisma = new PrismaClient();
+let userEmailBD = '';
+
+export const getEmail= async (emailBD: string): Promise<any> => {
+  userEmailBD = emailBD;
+  console.log('Datos resetPasword:', emailBD);
+}
 
 export const resetPassword: RequestHandler = async (req, res) => {
-  const { code, newPassword } = req.body;
+  const { newPassword } = req.body;
 
-  console.log('📩 Llega al backend:', { code, newPassword });
+  console.log('📩 Llega al backend:', { newPassword });
 
-  if (!code || !newPassword) {
+  if ( !newPassword) {
     res.status(400).json({ message: 'Faltan campos requeridos' });
     return;
   }
 
   try {
-    const users = await prisma.user.findMany({
+    const foundUser = await prisma.user.findFirst({
       where: {
-        codigoVerificacion: code.trim(),
+        email: userEmailBD, 
+        //codigoVerificacion: code.trim(),
       },
     });
 
-    if (users.length === 0) {
-      console.log('❌ No se encontró ningún usuario con ese código.');
-      console.log('📋 Buscando código en la BD:', code);
-      const all = await prisma.user.findMany({
-        select: { email: true, codigoVerificacion: true },
-      });
-      console.log('🧾 Todos los usuarios y códigos:', all);
-      res.status(400).json({ message: 'Código inválido' });
+    if (!foundUser) {
+      
+      console.log('El email no se encontró en la bd', userEmailBD);
+      res.status(400).json({ message: 'Error del sistema' });
       return;
     }
 
-    const user = users[0];
+    const user = foundUser;
 
     await prisma.user.update({
       where: { email: user.email },

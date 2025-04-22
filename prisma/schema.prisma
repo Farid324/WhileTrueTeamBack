@@ -11,6 +11,10 @@ model User {
   id          Int     @id @default(autoincrement())
   email       String  @unique
   name        String?
-  contraseña String
-  codigoVerificacion String?
+  contraseña  String
+  codigoVerificacion  String?
+  existe  Boolean?
+  isBlocked Boolean @default(false)
+  blockuntil  DateTime?
+  failedCodeAttempts   Int      @default(0)
 }
