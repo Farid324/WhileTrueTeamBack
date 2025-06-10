@@ -73,7 +73,7 @@ async function ensureDefaultUbicacion() {
 
 // ✅ CORS robusto
 app.use((req: Request, res: Response, next: NextFunction): void => {
-  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.header("Access-Control-Allow-Origin", `${process.env.FRONTEND_URL}`);
   res.header("Access-Control-Allow-Credentials", "true");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
@@ -215,7 +215,7 @@ async function startServer() {
     app.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
       console.log(`🌐 Environment: ${process.env.NODE_ENV || "development"}`);
-      console.log(`📡 Health check available at: http://localhost:${PORT}/health`);
+      //console.log(`📡 Health check available at: http://localhost:${PORT}/health`);
     });
   } catch (error) {
     console.error("❌ Error al iniciar el servidor:", error);
